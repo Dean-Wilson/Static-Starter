@@ -55,6 +55,7 @@ gulp.task('images', function () {
 
 //svg
 gulp.task('svg', function() {
+    
   return gulp.src('src/img/svg/*.svg')
   .pipe(plumber())
   .pipe(svgmin(function getOptions (file) {
@@ -77,7 +78,7 @@ gulp.task('watch', function () {
   gulp.watch('src/js/*.js', ['js']).on('change', reload);
   gulp.watch('src/js/vendor/*.js', ['vendor']).on('change', reload);
   gulp.watch('src/img/*.+(png|jpg|gif)', ['images']).on('change', reload);
-  gulp.watch('src/img/svg/*.svg',['svg']).on('change', reload);
+  gulp.watch('src/img/svg/*.+(svg)',['svg']).on('change', reload);
 });
 
 // Browsersync
