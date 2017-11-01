@@ -14,6 +14,9 @@ var concat = require('gulp-concat');
 var imagemin = require('gulp-imagemin');
 var browserSync = require('browser-sync').create();
 var reload = browserSync.reload;
+var svgstore = require('gulp-svgstore');
+var svgmin = require('gulp-svgmin');
+var path = require('path');
 
 // Stylesheets
 gulp.task('sass', function () {
@@ -45,9 +48,27 @@ gulp.task('vendor', function () {
 
 // Image Minify
 gulp.task('images', function () {
-  return gulp.src('src/img/*.+(png|jpg|gif|svg)')
+  return gulp.src('src/img/*.+(png|jpg|gif)')
     .pipe(imagemin())
     .pipe(gulp.dest('dist/img'))
+});
+
+//svg
+gulp.task('svg', function() {
+  return gulp.src('src/img/svg/*.svg')
+  .pipe(plumber())
+  .pipe(svgmin(function getOptions (file) {
+      var prefix = path.basename(file.relative, path.extname(file.relative));
+      return {
+          plugins: [{
+              cleanupIDs: {
+                  prefix: prefix + '-',
+                  minify: true
+              }
+          }]
+      }
+  }))
+  .pipe(gulp.dest('dist/img/svg'));
 });
 
 //Watcher
@@ -55,7 +76,8 @@ gulp.task('watch', function () {
   gulp.watch('src/styles/*.scss', ['sass']);
   gulp.watch('src/js/*.js', ['js']).on('change', reload);
   gulp.watch('src/js/vendor/*.js', ['vendor']).on('change', reload);
-  gulp.watch('src/img/*.+(png|jpg|gif|svg)', ['images']).on('change', reload);
+  gulp.watch('src/img/*.+(png|jpg|gif)', ['images']).on('change', reload);
+  gulp.watch('src/img/svg/*.svg',['svg']).on('change', reload);
 });
 
 // Browsersync
@@ -72,4 +94,4 @@ gulp.task('serve', function () {
 });
 
 // Run tasks on 'gulp'
-gulp.task('default', ['sass', 'js', 'vendor', 'watch', 'serve', 'images']);
+gulp.task('default', ['sass', 'js', 'vendor', 'watch', 'serve', 'images','svg']);
